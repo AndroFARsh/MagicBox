@@ -1,0 +1,31 @@
+<beans>
+    <!-- Java Library -->
+	<bean id="fileManager" tag="java" class="com.magicbox.demo.MockJarFileManager" />
+	<bean id="resourceManager" tag="java" class="com.magicbox.demo.MockJarResourceManager" >
+	    <property name="fileManager" refTag="java" ref="fileManager" />
+	</bean>
+	<bean id="parser" tag="java_json" class="com.magicbox.demo.MockJarJsonParser" />    
+	<bean id="parser" tag="java_xml" class="com.magicbox.demo.MockJarXmlParser" />
+	
+	<!-- Android Library -->
+	<bean id="fileManager" tag="android" class="com.magicbox.demo.MockAndroidFileManager" />
+	<bean id="resourceManager" tag="android" class="com.magicbox.demo.MockAndroidResourceManager" >
+	    <property name="fileManager" ref="fileManager" />
+	</bean>
+	<bean id="parser" tag="android_json" class="com.magicbox.demo.MockAndroidJsonParser" />    
+	<bean id="parser" tag="android_xml" class="com.magicbox.demo.MockAndroidXmlParser" />
+	
+	<!-- Android Library -->
+	<bean id="fileManager" class="com.magicbox.core.CompositeFileManager" >
+	      <property name="fileManager" ref="fileManager" taggedBy="*" />
+	</bean>
+	<bean id="resourceManager" class="com.magicbox.core.CompositeResourceManager" >
+	    <property name="resourceManager" ref="resourceManager" taggedBy="*" />
+	</bean>
+	<bean id="parser" tag="json" class="com.magicbox.core.CompositeParser" >
+	    <property name="parser" ref="parser" taggedBy="^[a-z_A-z0-9]*_json$" />
+	</bean>
+	<bean id="parser" tag="xml" class="com.magicbox.core.CompositeParser" >
+	    <property name="parser" ref="parser" taggedBy="^[a-z_A-z0-9]*_xml$" />
+	</bean>        
+</beans>

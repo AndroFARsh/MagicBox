@@ -1,0 +1,20 @@
+<!-- Root elements -->
+
+<!-- root container -->
+<!ELEMENT beans (bean)*>
+
+<!ELEMENT bean (property|alias)*>
+<!ATTLIST bean id ID #REQUIRED>
+<!ATTLIST bean tag CDATA #IMPLIED>
+<!ATTLIST bean class CDATA #REQUIRED>
+
+<!ELEMENT alias EMPTY>
+<!ATTLIST alias id ID #REQUIRED>
+<!ATTLIST alias tag CDATA #IMPLIED>
+
+<!ELEMENT property EMPTY>
+<!ATTLIST property name ID #REQUIRED>
+<!ATTLIST property ref CDATA #IMPLIED>
+<!ATTLIST property refTag CDATA #IMPLIED>
+<!ATTLIST property taggedBy CDATA #IMPLIED>
+<!ATTLIST property value CDATA #IMPLIED>

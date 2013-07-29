@@ -1,0 +1,18 @@
+<config>
+    <package>com.magicbox.xml.dtd</package>
+    <unit>
+        <prefixes attPrefix="a" tagPrefix="X" attEnumPrefix="" tagEnumPrefix=""/>
+        <nameTranslationMethod>
+            <camelCaseTranslation/>
+         </nameTranslationMethod>
+        <moduleGeneration>
+            <generateDomModel />
+        </moduleGeneration>
+        <imports>
+            <import>java.util.Hashtable</import>
+        </imports>
+        <tagEnumClassName>T</tagEnumClassName>
+        <attEnumClassName>A</attEnumClassName>
+        <parentClassName>LevelElement</parentClassName>
+    </unit>
+</config>

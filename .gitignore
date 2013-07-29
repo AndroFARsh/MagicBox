@@ -1,0 +1,7 @@
+**/bin
+**/gen
+**/\.project
+**/\.settings
+**/\.classpath
+**/target
+**/lint.xml

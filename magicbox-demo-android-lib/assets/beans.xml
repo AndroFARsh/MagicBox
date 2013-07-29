@@ -1,0 +1,8 @@
+<beans>
+	<bean id="fileManager" class="com.magicbox.demo.MockAndroidFileManager" />
+	<bean id="resourceManager" class="com.magicbox.demo.MockAndroidResourceManager" >
+	    <property name="fileManager" ref="fileManager" />
+	</bean>
+	<bean id="parser" tag="json" class="com.magicbox.demo.MockAndroidJsonParser" />    
+	<bean id="parser" tag="xml" class="com.magicbox.demo.MockAndroidXmlParser" />
+</beans>
