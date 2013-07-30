@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Ab
 
 	private void initialize() {
 		StringBuilder text = new StringBuilder();
-		text.append("<b>Initialize time: </b><br/>").append(System.currentTimeMillis() - startTime).append("ms<br/>");
+		text.append("<b>Initialize time: </b>").append(System.currentTimeMillis() - startTime).append("ms<br/><br/>");
 		text.append("<b>FileManager bean: </b><br/>").append(factory.<FileManager>get("fileManager").getName()).append("<br/>");
 		text.append("<b>ResourceManager bean: </b><br/>").append(factory.<ResourceManager>get("resourceManager").getName()).append("<br/>");
 		text.append("<b>Json Parser bean: </b><br/>").append(factory.<Parser<?>>get("parser", "json").getName()).append("<br/>");
