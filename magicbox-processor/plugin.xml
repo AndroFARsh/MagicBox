@@ -4,7 +4,7 @@
    <extension
         point="org.eclipse.jdt.apt.core.annotationProcessorFactory">
          <java6processors enableDefault="true">
-                <java6processor class="com.beanannotation.processor.BeanAnnotationProcessor"/>
+                <java6processor class="com.magicbox.processor.MagicBoxProcessor"/>
          </java6processors>
    </extension>
 

@@ -77,8 +77,8 @@ class XmlElementImpl implements XmlElement {
 		}
 	}
 
-	public XmlElement startElement(String uri, String localName, String qName, Attributes attributes)
-			throws SAXException {
+	public XmlElement startElement(String uri, String localName, String qName,
+			Attributes attributes) throws SAXException {
 		String name;
 		if ((localName != null) && (localName.length() > 0)) {
 			name = localName;
@@ -90,12 +90,14 @@ class XmlElementImpl implements XmlElement {
 		if (i == null) {
 			return null;
 		}
-		final XmlElement el = new XmlElementImpl(dtdMap, i.intValue(), attributes);
+		final XmlElement el = new XmlElementImpl(dtdMap, i.intValue(),
+				attributes);
 		children().add(el);
 		return el;
 	}
 
-	public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length)
+			throws SAXException {
 		if (!dtdMap.hasPCDATA[elementId]) {
 			return;
 		}
@@ -140,12 +142,23 @@ class XmlElementImpl implements XmlElement {
 	}
 
 	@Override
+	public boolean hasAttrById(int id) {
+		return getAttrById(id) != null;
+	}
+
+	@Override
+	public boolean hasAttrByIndex(int index) {
+		return getAttrByIndex(index) != null;
+	}
+
+	@Override
 	public String getAttrById(int id) {
 		try {
 			return attrValues[dtdMap.AttributeIdToIndex[elementId][id]];
 		} catch (final IndexOutOfBoundsException exception) {
-			throw new RuntimeException("Couldn't resolve index of attribute [" + dtdMap.AttributeIdToName[id]
-					+ "] of tag <" + dtdMap.TagIdToName[elementId] + ">");
+			throw new RuntimeException("Couldn't resolve index of attribute ["
+					+ dtdMap.AttributeIdToName[id] + "] of tag <"
+					+ dtdMap.TagIdToName[elementId] + ">");
 		}
 	}
 
@@ -183,13 +196,15 @@ class XmlElementImpl implements XmlElement {
 		for (int index = 0; index < attrValues.length; ++index) {
 			if (attrValues[index] != null) {
 				final int id = dtdMap.AttributeIndexToId[elementId][index];
-				b.append(" ").append(dtdMap.AttributeIdToName[id]).append("=").append(attrValues[index]);
+				b.append(" ").append(dtdMap.AttributeIdToName[id]).append("=")
+						.append(attrValues[index]);
 			}
 		}
 
 		if (freeAttrNames != null) {
 			for (int i = 0; i < freeAttrNames.length; ++i) {
-				b.append(" (").append(freeAttrNames[i]).append(")=").append(freeAttrValues[i]);
+				b.append(" (").append(freeAttrNames[i]).append(")=")
+						.append(freeAttrValues[i]);
 			}
 		}
 

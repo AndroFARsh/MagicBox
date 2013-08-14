@@ -12,7 +12,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.magicbox.xml.dtd.BeansDtd;
+import com.magicbox.xml.dtd.DtdMappings;
 
 public class DefaultXmlParser implements XmlParser {
 	private static final SAXParser PARSER;
@@ -25,9 +25,10 @@ public class DefaultXmlParser implements XmlParser {
 	}
 
 	@Override
-	public synchronized XmlElement load(final InputStream is) throws XmlParserException {
+	public synchronized XmlElement load(final InputStream is,
+			final DtdMappings dtdMappings) throws XmlParserException {
 		try {
-			final XmlParser parse = new XmlParser();
+			final XmlParser parse = new XmlParser(dtdMappings);
 			PARSER.parse(is, parse);
 			return parse.document;
 		} catch (final SAXException e) {
@@ -39,8 +40,12 @@ public class DefaultXmlParser implements XmlParser {
 
 	static class XmlParser extends DefaultHandler {
 		Stack<XmlElement> tagStack = new Stack<XmlElement>();
-		XmlElement root = new XmlElementImpl(BeansDtd.INSTANCE);
+		XmlElement root;
 		XmlElement document;
+
+		public XmlParser(DtdMappings dtdMappings) {
+			root = new XmlElementImpl(dtdMappings);
+		}
 
 		@Override
 		public void startDocument() throws SAXException {
@@ -52,19 +57,22 @@ public class DefaultXmlParser implements XmlParser {
 		@Override
 		public void endDocument() throws SAXException {
 			if (tagStack.size() > 1) {
-				throw new SAXException("XML: Tag Stack has " + tagStack.size() + " open elements");
+				throw new SAXException("XML: Tag Stack has " + tagStack.size()
+						+ " open elements");
 			}
 		}
 
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		public void startElement(String uri, String localName, String qName,
+				Attributes attributes) throws SAXException {
 			// put to the stack any element (event if it null)
 			if (tagStack.empty()) {
 				throw new SAXException("XML: Stack is empty");
 			}
 
 			final XmlElementImpl r = (XmlElementImpl) tagStack.peek();
-			final XmlElement element = r.startElement(uri, localName, qName, attributes);
+			final XmlElement element = r.startElement(uri, localName, qName,
+					attributes);
 			tagStack.push(element);
 			if (r.equals(root)) {
 				document = tagStack.peek();
@@ -72,7 +80,8 @@ public class DefaultXmlParser implements XmlParser {
 		}
 
 		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length)
+				throws SAXException {
 			if (tagStack.empty()) {
 				throw new SAXException("XML: Stack is empty");
 			}
@@ -84,7 +93,8 @@ public class DefaultXmlParser implements XmlParser {
 		}
 
 		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName)
+				throws SAXException {
 			if (tagStack.empty()) {
 				throw new SAXException("XML: Stack is empty");
 			}

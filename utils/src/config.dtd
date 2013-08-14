@@ -1,0 +1,55 @@
+<!ELEMENT config(package, unit, attributes?, tags?,constructors?,tagsProperties?)>
+<!ELEMENT package (#PCDATA)>
+
+<!ELEMENT unit(prefixes,nameTranslationMethod,moduleGeneration,rootElement?,imports?,tagEnumClassName,attEnumClassName, parentClassName)>
+
+<!ELEMENT nameTranslationMethod (camelCaseTranslation|gnuStyleTranslation|noTranslation)>
+
+<!ELEMENT camelCaseTranslation EMPTY>
+<!ELEMENT gnuStyleTranslation EMPTY>
+<!ELEMENT noTranslation EMPTY>
+
+<!ELEMENT moduleGeneration (generateStaticModel|generateDomModel)>
+
+<!ELEMENT generateStaticModel EMPTY>
+<!ELEMENT generateDomModel EMPTY>
+
+<!-- root element names the main root element, to be added to the structure -->
+<!ELEMENT rootElement (#PCDATA)>
+
+<!ELEMENT prefixes EMPTY>
+<!ATTLIST prefixes attPrefix CDATA "a">
+<!ATTLIST prefixes tagPrefix CDATA "tag">
+<!ATTLIST prefixes attEnumPrefix CDATA "E">
+<!ATTLIST prefixes tagEnumPrefix CDATA "E">
+
+<!ELEMENT imports (import*)>
+<!ELEMENT import (#PCDATA)>
+
+<!ELEMENT tagEnumClassName (#PCDATA)>
+<!ELEMENT attEnumClassName (#PCDATA)>
+<!ELEMENT parentClassName (#PCDATA)>
+
+<!ELEMENT attributes (attr*)>
+<!ELEMENT attr EMPTY>
+<!ATTLIST attr name ID #REQUIRED>
+<!ATTLIST attr alias CDATA #REQUIRED>
+<!ATTLIST attr type CDATA #IMPLIED>
+
+<!ELEMENT tags (tag*)>
+<!ELEMENT tag EMPTY>
+<!ATTLIST tag name ID #REQUIRED>
+<!ATTLIST tag alias CDATA #REQUIRED>
+ 
+<!ELEMENT constructors (constructor*)>
+<!ELEMENT constructor (constructFunction, argument+)>
+<!ATTLIST constructor name ID #REQUIRED>
+
+<!ELEMENT constructFunction (#PCDATA)>
+
+<!ELEMENT argument (#PCDATA)>
+
+<!ELEMENT tagsProperties (property*)>
+<!ELEMENT property EMPTY>
+<!ATTLIST property tagName ID #REQUIRED>
+<!ATTLIST property containArbitraryAttributes CDATA "False">

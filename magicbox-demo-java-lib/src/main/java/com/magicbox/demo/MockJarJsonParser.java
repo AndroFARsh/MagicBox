@@ -2,8 +2,10 @@ package com.magicbox.demo;
 
 import java.io.InputStream;
 
+import com.magicbox.annotation.Bean;
 import com.magicbox.demo.model.Parser;
 
+@Bean(id ="parser", tag = "jar_json")
 public class MockJarJsonParser implements Parser<Object> {
 	@Override
 	public Object parse(InputStream stream) {
@@ -12,7 +14,7 @@ public class MockJarJsonParser implements Parser<Object> {
 
 	@Override
 	public String getName() {
-		return MockJarJsonParser.class.getSimpleName();
+		return getClass().getSimpleName();
 	}
 	
 	@Override

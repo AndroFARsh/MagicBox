@@ -1,7 +1,7 @@
 <?eclipse.ant.import?>
 <project name="dtd">
 <target name="xmlgen" description="Generates classes that contain tags and attributes from DTD">
-		<exec executable="DtdToJava.exe">
+		<exec executable="../../utils/DtdToJava.exe">
 			<arg value="beans.xml" />
 			<arg value="beans.dtd" />
 			<arg value="../src/main/java" />

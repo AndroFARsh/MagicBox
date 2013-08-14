@@ -5,3 +5,4 @@
 **/\.classpath
 **/target
 **/lint.xml
+**/.apt_generated

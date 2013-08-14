@@ -1,27 +1,26 @@
 package com.magicbox.demo;
 
-import java.io.InputStream;
+import com.magicbox.annotation.Alias;
+import com.magicbox.annotation.Bean;
+import com.magicbox.annotation.Property;
+import com.magicbox.demo.model.Parser;
 
-import com.magicbox.demo.model.FileManager;
-import com.magicbox.demo.model.ResourceManager;
-
-public class MockJarResourceManager implements ResourceManager {
-	private FileManager fileManager;
+@Bean(alias={@Alias(id="resourceManager")})
+public class MockJarResourceManager extends MockBaseJarResourceManager {
+	private Parser<Object> jsonParser;
 	
-	public void setFileManager(FileManager manager) {
-		fileManager = manager;
+	@Property(id = "parser", tag ="jar_xml")
+	public Parser<Object> xmlParser;
+	
+	@Property(id = "parser", tag ="jar_json")
+	public void setParses(Parser<Object> jsonParser) {
+		this.jsonParser = jsonParser;
 	}
 	
-	public String getName(){
-		return MockJarResourceManager.class.getSimpleName() + "[" + (fileManager != null ? fileManager.getName() : "NULL") + "]";
-	}
-	
-	public String toString(){
-		return getName();
-	}
-
 	@Override
-	public InputStream getResource() {
-		return null;
+	public String getName() {
+		return super.getName()+
+				"[jsonParser="+jsonParser!=null ? jsonParser.getName() : "NULL]"+
+				"[xmlParser="+jsonParser!=null ? xmlParser.getName() : "NULL]";
 	}
 }
