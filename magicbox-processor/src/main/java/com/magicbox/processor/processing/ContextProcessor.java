@@ -47,6 +47,7 @@ public class ContextProcessor implements Processor {
 	private void processBeanDef(JDefinedClass clazz, Node node) {
 		JMethod registerMethod = clazz.method(JMod.PUBLIC | JMod.FINAL,
 				codeModel.VOID, REGISTER_BEAN_DEFINITIONS);
+		registerMethod.annotate(Override.class);
 		JBlock block = registerMethod.body();
 		
 		block.invoke(JExpr._super(), REGISTER_BEAN_DEFINITIONS);

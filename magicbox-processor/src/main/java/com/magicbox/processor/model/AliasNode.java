@@ -23,7 +23,7 @@ public class AliasNode extends BaseNode {
 
 	@Override
 	public NodeType type() {
-		return NodeType.Root;
+		return NodeType.Alias;
 	}
 
 }

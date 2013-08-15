@@ -57,7 +57,7 @@ public class PropertyProcessor implements Processor {
 			case FIELD:
 				block.assign(JExpr
 						.ref(bean, element.getSimpleName().toString()), JExpr
-						.cast(codeModel.parseType(element.toString()), value));
+						.cast(codeModel.parseType(element.asType().toString()), value));
 				break;
 			default:
 				break;

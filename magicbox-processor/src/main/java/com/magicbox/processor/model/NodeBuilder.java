@@ -1,5 +1,6 @@
 package com.magicbox.processor.model;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
+import com.magicbox.annotation.Alias;
 import com.magicbox.annotation.Bean;
 import com.magicbox.annotation.Context;
 import com.magicbox.annotation.Property;
@@ -67,22 +69,22 @@ public class NodeBuilder implements Builder {
 		return false;
 	}
 
-
 	@Override
 	public Node build(Set<? extends TypeElement> elements) {
 		BaseNode node = new RootNode();
 		for (TypeElement e : elements) {
 			if (isAnnotationSupported(e)) {
-				node.attachChild(build(e, NodeType.Context));
-			} 
+				node.attachChild(build(e.getAnnotation(Context.class), e,
+						NodeType.Context));
+			}
 		}
 		return node;
 	}
 
-	public BaseNode build(Element element, NodeType type) {
+	public BaseNode build(Annotation a, Element element, NodeType type) {
 		switch (type) {
 		case Context: {
-			final Context annotation = element.getAnnotation(Context.class);
+			final Context annotation = (Context) a;
 			final ContextNode node = new ContextNode();
 
 			ClassComposer clazzComposer = node.getNodeClass().classComposer();
@@ -90,11 +92,12 @@ public class NodeBuilder implements Builder {
 					(annotation != null) ? annotation.value()
 							: Constants.DEFAULT_CONTEXT_CLASS_NAME);
 			clazzComposer.compose();
-			node.attachChild(build(element, NodeType.Bean));
+			node.attachChild(build(element.getAnnotation(Bean.class), element,
+					NodeType.Bean));
 			return node;
 		}
 		case Bean: {
-			final Bean annotation = element.getAnnotation(Bean.class);
+			final Bean annotation = (Bean) a;
 			if (annotation == null) {
 				return null;
 			}
@@ -114,13 +117,28 @@ public class NodeBuilder implements Builder {
 			clazzComposer.compose();
 
 			for (Element e : findAllAnsessorElement((TypeElement) element)) {
-				node.attachChild(build(e, NodeType.Property));
+				node.attachChild(build(e.getAnnotation(Property.class), e,
+						NodeType.Property));
+			}
+			for (Alias alias : annotation.alias()) {
+				node.attachChild(build(alias, element, NodeType.Alias));
 			}
 			return node;
 		}
-		case Alias:{
+		case Alias: {
+			final Alias annotation = (Alias) a;
+			if (annotation == null) {
+				return null;
+			}
 
-			
+			AliasNode node = new AliasNode();
+			ClassComposer clazzComposer = node.getNodeClass().classComposer();
+			applyAttributeToClass(clazzComposer, A.Id, annotation.id());
+			if (!annotation.tag().isEmpty()) {
+				applyAttributeToClass(clazzComposer, A.Tag, annotation.tag());
+			}
+			clazzComposer.compose();
+			return node;
 		}
 		case Property: {
 			final Property annotation = element.getAnnotation(Property.class);
@@ -153,15 +171,15 @@ public class NodeBuilder implements Builder {
 		return null;
 	}
 
-	
-	private void findAllAnsessorElement(Set<Element> elements, TypeElement element) {
-		for (Element enclosedElement :  element.getEnclosedElements()) {
+	private void findAllAnsessorElement(Set<Element> elements,
+			TypeElement element) {
+		for (Element enclosedElement : element.getEnclosedElements()) {
 			ElementKind enclosedKind = enclosedElement.getKind();
 			switch (enclosedKind) {
 			case METHOD:
 			case FIELD:
 			case PARAMETER:
-				if (isAnnotationSupported(enclosedElement)){
+				if (isAnnotationSupported(enclosedElement)) {
 					elements.add(enclosedElement);
 				}
 				break;
@@ -169,11 +187,11 @@ public class NodeBuilder implements Builder {
 				break;
 			}
 		}
-		
+
 		TypeElement typeElement = element;
 		TypeMirror ancestorTypeMirror = typeElement.getSuperclass();
-		if (ancestorTypeMirror.getKind() != TypeKind.NONE &&
-			ancestorTypeMirror instanceof DeclaredType) {
+		if (ancestorTypeMirror.getKind() != TypeKind.NONE
+				&& ancestorTypeMirror instanceof DeclaredType) {
 			DeclaredType ancestorDeclaredType = (DeclaredType) ancestorTypeMirror;
 			Element ancestorElement = ancestorDeclaredType.asElement();
 			if (ancestorElement instanceof TypeElement) {
@@ -181,8 +199,7 @@ public class NodeBuilder implements Builder {
 			}
 		}
 	}
-	
-	
+
 	private Set<Element> findAllAnsessorElement(TypeElement e) {
 		Set<Element> set = new HashSet<Element>();
 		findAllAnsessorElement(set, e);

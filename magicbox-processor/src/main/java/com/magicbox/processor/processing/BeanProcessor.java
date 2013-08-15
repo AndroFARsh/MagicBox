@@ -53,6 +53,7 @@ public class BeanProcessor implements Processor {
 			
 			JMethod create = beanDefClass.method(JMod.PUBLIC | JMod.FINAL,
 					Object.class, "create");
+			create.annotate(Override.class);
 			create.body()._return(JExpr._new(beanType));
 
 			if (!node.children().isEmpty()){
@@ -68,18 +69,27 @@ public class BeanProcessor implements Processor {
 	private void processProperties(JDefinedClass clazz, JType beanType, JFieldVar contextField, Node node) {
 		JMethod assemble = clazz.method(JMod.PUBLIC | JMod.FINAL,
 				codeModel.VOID, "assemble");
+		assemble.annotate(Override.class);
 		JVar arg = assemble.param(Object.class, ARG);
 		JBlock block = assemble.body();
 		JVar bean = block.decl(beanType, BEAN);
 		block.assign(bean, JExpr.cast(beanType, arg));
-		for (Node property : node.children()) {
-			property.getNodeClass().classComposer()
-				.set(PropertyProcessor.CONTEXT, contextField)
-				.set(PropertyProcessor.BLOCK, block)
-				.set(PropertyProcessor.BEAN, bean)
-				.compose();
-			
-			processor.process(property);
+		for (Node child : node.children()) {
+			switch (child.type()) {
+			case Alias:
+				break;
+			case Bean:
+				child.getNodeClass().classComposer()
+					.set(PropertyProcessor.CONTEXT, contextField)
+					.set(PropertyProcessor.BLOCK, block)
+					.set(PropertyProcessor.BEAN, bean)
+					.compose();
+				
+				processor.process(child);	
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
