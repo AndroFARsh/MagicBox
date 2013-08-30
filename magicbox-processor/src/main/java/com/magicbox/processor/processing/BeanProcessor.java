@@ -23,40 +23,43 @@ public class BeanProcessor implements Processor {
 	private static final String ARG = "arg";
 	private static final String BEAN = "bean";
 	private static final String CONTEXT = "context";
-	
-	
+
 	private JCodeModel codeModel;
-	private Processor processor; 
+	private Processor processor;
 
 	@Override
 	public void process(Node node) {
 		try {
 			String clazzName = new StringBuilder()
-				.append(node.parent().getNodeClass().getString(P.packageName))
-				.append(node.getNodeClass().getString(P.simpleName))
-				.append(Constants.SUFFIX)
-				.toString();
-			
-			JDefinedClass beanDefClass = codeModel._class(JMod.FINAL, clazzName, ClassType.CLASS);
+					.append(node.parent().getNodeClass()
+							.getString(P.packageName))
+					.append(node.getNodeClass().getString(P.simpleName))
+					.append(Constants.SUFFIX).toString();
+
+			JDefinedClass beanDefClass = codeModel._class(JMod.FINAL,
+					clazzName, ClassType.CLASS);
 			beanDefClass._extends(AbstractBeanDef.class);
-			
-			node.getNodeClass().classComposer().set(BEAN_DEF, beanDefClass).compose();
-			
-			JFieldVar contextField = beanDefClass.field(JMod.FINAL | JMod.PRIVATE, BaseContext.class, CONTEXT);
+
+			node.getNodeClass().classComposer().set(BEAN_DEF, beanDefClass)
+					.compose();
+
+			JFieldVar contextField = beanDefClass.field(JMod.FINAL
+					| JMod.PRIVATE, BaseContext.class, CONTEXT);
 
 			JMethod beanDefConstructor = beanDefClass.constructor(JMod.PUBLIC);
 			JVar argVar = beanDefConstructor.param(BaseContext.class, CONTEXT);
-			beanDefConstructor.body()
-				.assign(JExpr._this().ref(contextField), JExpr.ref(argVar.name()));
+			beanDefConstructor.body().assign(JExpr._this().ref(contextField),
+					JExpr.ref(argVar.name()));
 
-			JType beanType = codeModel.parseType(node.getNodeClass().getString(P.fullQulifiedName));
-			
+			JType beanType = codeModel.parseType(node.getNodeClass().getString(
+					P.fullQulifiedName));
+
 			JMethod create = beanDefClass.method(JMod.PUBLIC | JMod.FINAL,
 					Object.class, "create");
 			create.annotate(Override.class);
 			create.body()._return(JExpr._new(beanType));
 
-			if (!node.children().isEmpty()){
+			if (!node.children().isEmpty()) {
 				processProperties(beanDefClass, beanType, contextField, node);
 			}
 		} catch (ClassNotFoundException e) {
@@ -66,7 +69,8 @@ public class BeanProcessor implements Processor {
 		}
 	}
 
-	private void processProperties(JDefinedClass clazz, JType beanType, JFieldVar contextField, Node node) {
+	private void processProperties(JDefinedClass clazz, JType beanType,
+			JFieldVar contextField, Node node) {
 		JMethod assemble = clazz.method(JMod.PUBLIC | JMod.FINAL,
 				codeModel.VOID, "assemble");
 		assemble.annotate(Override.class);
@@ -78,14 +82,13 @@ public class BeanProcessor implements Processor {
 			switch (child.type()) {
 			case Alias:
 				break;
-			case Bean:
+			case Property:
 				child.getNodeClass().classComposer()
-					.set(PropertyProcessor.CONTEXT, contextField)
-					.set(PropertyProcessor.BLOCK, block)
-					.set(PropertyProcessor.BEAN, bean)
-					.compose();
-				
-				processor.process(child);	
+						.set(PropertyProcessor.CONTEXT, contextField)
+						.set(PropertyProcessor.BLOCK, block)
+						.set(PropertyProcessor.BEAN, bean).compose();
+
+				processor.process(child);
 				break;
 			default:
 				break;

@@ -5,7 +5,7 @@ import com.magicbox.annotation.Bean;
 import com.magicbox.annotation.Property;
 import com.magicbox.demo.model.Parser;
 
-@Bean(alias={@Alias(id="resourceManager")})
+@Bean(tag="mock", alias={@Alias(id="resourceManager")})
 public class MockJarResourceManager extends MockBaseJarResourceManager {
 	private Parser<Object> jsonParser;
 	

@@ -93,7 +93,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 		if (bean instanceof AliasBeanDef) {
 			final AliasBeanDef alias = (AliasBeanDef) bean;
 			bean = (alias.tag == null ? get(alias.id)
-					: get(alias.tag, alias.id));
+					: get(alias.id, alias.tag));
 		}
 
 		return (T) bean;
@@ -109,7 +109,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 
 		for (int i = 0; (i < parents.length) && (bean == null); ++i) {
 			try {
-				bean = parents[i].get(tag, id);
+				bean = parents[i].get(id, tag);
 			} catch (final BeanNotFoundException exception) {
 				// keep calm and carry on
 			}
@@ -132,7 +132,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 
 		for (int i = 0; (i < parents.length) && (bean == null); ++i) {
 			try {
-				bean = parents[i].get(tag, id);
+				bean = parents[i].get(id, tag);
 			} catch (final BeanNotFoundException exception) {
 				// keep calm and carry on
 			}
@@ -152,7 +152,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 		if (bean instanceof AliasBeanDef) {
 			final AliasBeanDef alias = (AliasBeanDef) bean;
 			bean = (alias.tag == null ? get(alias.id)
-					: get(alias.tag, alias.id));
+					: get(alias.id, alias.tag));
 		}
 
 		return (T) bean;
@@ -170,7 +170,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 			if (bean instanceof AliasBeanDef) {
 				final AliasBeanDef aliasDef = (AliasBeanDef) bean;
 				bean = (aliasDef.tag == null ? get(aliasDef.id) : get(
-						aliasDef.tag, aliasDef.id));
+						aliasDef.id, aliasDef.tag));
 			}
 			beanInfos.add(new BeanInfo(entry.getKey(), alias, bean));
 		}
@@ -183,7 +183,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 				if (bean instanceof AliasBeanDef) {
 					final AliasBeanDef aliasDef = (AliasBeanDef) bean;
 					bean = (aliasDef.tag == null ? get(aliasDef.id) : get(
-							aliasDef.tag, aliasDef.id));
+							aliasDef.id, aliasDef.tag));
 				}
 				beanInfos.add(new BeanInfo(beanEntry.getKey(), tagEntry
 						.getKey(), alias, bean));
