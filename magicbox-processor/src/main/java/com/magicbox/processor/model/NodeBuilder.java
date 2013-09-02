@@ -16,12 +16,17 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
+import javax.swing.text.html.Option;
 
+import com.magicbox.Initializable;
+import com.magicbox.ProgressCallback;
 import com.magicbox.annotation.Alias;
 import com.magicbox.annotation.Bean;
 import com.magicbox.annotation.Context;
 import com.magicbox.annotation.Property;
 import com.magicbox.processor.Constants;
+import com.magicbox.processor.android.AndroidManifest;
+import com.magicbox.processor.android.AndroidManifestFinder;
 import com.magicbox.processor.model.Node.NodeType;
 import com.magicbox.processor.model.NodeClass.ClassComposer;
 import com.magicbox.processor.model.NodeClass.NodeException;
@@ -29,10 +34,17 @@ import com.magicbox.processor.xml.dtd.A;
 import com.magicbox.processor.xml.dtd.T;
 import com.magicbox.xml.XmlElement;
 
-public class NodeBuilder implements Builder {
+public class NodeBuilder implements Builder, Initializable {
 	private ProcessingEnvironment processingEnv;
 	private AbstractProcessor processor;
+	private AndroidManifestFinder manifestFinder;
+	private AndroidManifest maifest;
 
+	@Override
+	public void initialize(ProgressCallback callback) throws InterruptedException {
+		maifest = manifestFinder.extractAndroidManifest().getOr(AndroidManifest.createLibraryManifest(Constants.DEFAULT_PACKAGE));
+	}
+	
 	@Override
 	public BaseNode build(XmlElement element) {
 		switch (element.getId()) {
@@ -90,7 +102,7 @@ public class NodeBuilder implements Builder {
 			ClassComposer clazzComposer = node.getNodeClass().classComposer();
 			applyAttributeToClass(clazzComposer, A.Output,
 					(annotation != null) ? annotation.value()
-							: Constants.DEFAULT_CONTEXT_CLASS_NAME);
+							: maifest.getApplicationPackage()+"."+Constants.DEFAULT_CONTEXT_CLASS_NAME);
 			clazzComposer.compose();
 			node.attachChild(build(element.getAnnotation(Bean.class), element,
 					NodeType.Bean));
@@ -370,5 +382,9 @@ public class NodeBuilder implements Builder {
 
 	public void setProcessor(AbstractProcessor processor) {
 		this.processor = processor;
+	}
+
+	public void setManifestFinder(AndroidManifestFinder manifestFinder) {
+		this.manifestFinder = manifestFinder;
 	}
 }

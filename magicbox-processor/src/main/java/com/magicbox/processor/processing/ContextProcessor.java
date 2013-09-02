@@ -30,8 +30,7 @@ public class ContextProcessor implements Processor {
 		try {
 			String clazzName = node.getNodeClass()
 					.getString(P.fullQulifiedName);
-			JDefinedClass beanDefClass = codeModel._class(JMod.FINAL
-					| JMod.PUBLIC, clazzName, ClassType.CLASS);
+			JDefinedClass beanDefClass = codeModel._class(JMod.PUBLIC, clazzName, ClassType.CLASS);
 			beanDefClass._extends(BaseContext.class);
 
 			JMethod contextConstructor = beanDefClass.constructor(JMod.PUBLIC);
@@ -50,7 +49,7 @@ public class ContextProcessor implements Processor {
 	}
 
 	private void processBeanDef(JDefinedClass clazz, Node node) {
-		JMethod registerMethod = clazz.method(JMod.PUBLIC | JMod.FINAL,
+		JMethod registerMethod = clazz.method(JMod.PUBLIC,
 				codeModel.VOID, REGISTER_BEAN_DEFINITIONS);
 		registerMethod.annotate(Override.class);
 		JBlock block = registerMethod.body();

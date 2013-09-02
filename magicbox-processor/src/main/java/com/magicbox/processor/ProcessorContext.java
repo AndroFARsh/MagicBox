@@ -5,6 +5,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 
 import com.magicbox.BaseContext;
+import com.magicbox.processor.android.AndroidManifestFinder;
 import com.magicbox.processor.model.Builder;
 import com.magicbox.processor.model.ContextManager;
 import com.magicbox.processor.model.NodeBuilder;
@@ -34,6 +35,20 @@ public class ProcessorContext extends BaseContext {
 	protected void registerBeanDefinitions() {
 		super.registerBeanDefinitions();
 
+		register(AndroidManifestFinder.class, new AbstractBeanDef() {
+
+			@Override
+			public Object create() {
+				return new AndroidManifestFinder();
+			}
+			
+			@Override
+			public void assemble(Object bean) {
+				AndroidManifestFinder finder = (AndroidManifestFinder) bean;
+				finder.setProcessingEnvironment(processingEnv);
+			}
+		});
+		
 		register(JCodeModel.class, new AbstractBeanDef() {
 
 			@Override
@@ -87,6 +102,7 @@ public class ProcessorContext extends BaseContext {
 				NodeBuilder builder = (NodeBuilder) bean;
 				builder.setProcessingEnvironment(processingEnv);
 				builder.setProcessor(processor);
+				builder.setManifestFinder(get(AndroidManifestFinder.class));
 			}
 		});
 		
