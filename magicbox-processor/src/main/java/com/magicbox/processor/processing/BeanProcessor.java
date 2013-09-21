@@ -7,6 +7,8 @@ import com.magicbox.processor.model.Node;
 import com.magicbox.processor.model.P;
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.JBlock;
+import com.sun.codemodel.JCatchBlock;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JDefinedClass;
@@ -14,6 +16,7 @@ import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JTryBlock;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
 
@@ -57,7 +60,11 @@ public class BeanProcessor implements Processor {
 			JMethod create = beanDefClass.method(JMod.PUBLIC | JMod.FINAL,
 					Object.class, "create");
 			create.annotate(Override.class);
-			create.body()._return(JExpr._new(beanType));
+			
+			JTryBlock tyBlock = create.body()._try();
+			tyBlock.body()._return(JExpr._new(beanType));
+			JCatchBlock catchBlock = tyBlock._catch((JClass)codeModel.parseType(Throwable.class.getCanonicalName()));
+			catchBlock.body()._throw(JExpr._new(codeModel.parseType(RuntimeException.class.getCanonicalName())));
 
 			if (!node.children().isEmpty()) {
 				processProperties(beanDefClass, beanType, contextField, node);

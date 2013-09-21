@@ -45,6 +45,11 @@ public abstract class BaseContext implements Context, Lifecycle {
 	};
 
 	@Override
+	public final boolean hasBean(Class<?> id) {
+		return hasBean(id.getCanonicalName());
+	}
+	
+	@Override
 	public final boolean hasBean(String id) {
 		Object bean = beans.get(id);
 
@@ -61,6 +66,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 		return bean != null;
 	}
 
+	@Override
 	public final <T> T get(Class<T> id) {
 		return (T) get(id.getCanonicalName());
 	}
@@ -100,6 +106,11 @@ public abstract class BaseContext implements Context, Lifecycle {
 	}
 
 	@Override
+	public final boolean hasBean(Class<?> id, String tag) {
+		return hasBean(id.getCanonicalName(), tag);
+	}
+	
+	@Override
 	public final boolean hasBean(String id, String tag) {
 		Object bean = null;
 
@@ -118,6 +129,7 @@ public abstract class BaseContext implements Context, Lifecycle {
 		return bean != null;
 	}
 
+	@Override
 	public final <T> T get(Class<T> id, String tag) {
 		return (T) get(id.getCanonicalName(), tag);
 	}
@@ -205,6 +217,11 @@ public abstract class BaseContext implements Context, Lifecycle {
 		return false;
 	}
 
+	@Override
+	public final <T> List<? extends T> getTagged(Class<T> id, String... patterns) {
+		return getTagged(id.getCanonicalName(), patterns);
+	}
+	
 	@Override
 	public final <T> List<? extends T> getTagged(String id, String... patterns) {
 		final List<T> beans = new ArrayList<T>();
